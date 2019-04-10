@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from modules import * 
+from modules import *
 
 class MLP(object):
   """
@@ -17,8 +17,8 @@ class MLP(object):
 
   def __init__(self, n_inputs, n_hidden, n_classes):
     """
-    Initializes MLP object. 
-    
+    Initializes MLP object.
+
     Args:
       n_inputs: number of inputs.
       n_hidden: list of ints, specifies the number of units
@@ -28,7 +28,7 @@ class MLP(object):
       n_classes: number of classes of the classification problem.
                  This number is required in order to specify the
                  output dimensions of the MLP
-    
+
     TODO:
     Implement initialization of the network.
     """
@@ -36,21 +36,30 @@ class MLP(object):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    self.layers = []
+    previous = n_inputs
+    for unit in n_hidden:
+        self.layers.append(LinearModule(previous, unit))
+        self.layers.append(ReLUModule())
+        previous = unit
+
+    self.layers.append(LinearModule(previous, n_classes))
+    self.layers.append(SoftMaxModule())
+
     ########################
     # END OF YOUR CODE    #
     #######################
 
   def forward(self, x):
     """
-    Performs forward pass of the input. Here an input tensor x is transformed through 
+    Performs forward pass of the input. Here an input tensor x is transformed through
     several layer transformations.
-    
+
     Args:
       x: input to the network
     Returns:
       out: outputs of the network
-    
+
     TODO:
     Implement forward pass of the network.
     """
@@ -58,7 +67,9 @@ class MLP(object):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    for layer in self.layers:
+        out = layer.forward(x)
+
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -67,19 +78,20 @@ class MLP(object):
 
   def backward(self, dout):
     """
-    Performs backward pass given the gradients of the loss. 
+    Performs backward pass given the gradients of the loss.
 
     Args:
       dout: gradients of the loss
-    
+
     TODO:
     Implement backward pass of the network.
     """
-    
+
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    for layer in self.layers:
+        layer.backward(dout)
     ########################
     # END OF YOUR CODE    #
     #######################

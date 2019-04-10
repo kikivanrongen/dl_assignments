@@ -12,6 +12,7 @@ import os
 from mlp_numpy import MLP
 from modules import CrossEntropyModule
 import cifar10_utils
+import matplotlib.pyplot as plt
 
 # Default constants
 DNN_HIDDEN_UNITS_DEFAULT = '100'
@@ -29,7 +30,7 @@ def accuracy(predictions, targets):
   """
   Computes the prediction accuracy, i.e. the average of correct predictions
   of the network.
-  
+
   Args:
     predictions: 2D float array of size [batch_size, n_classes]
     labels: 2D int array of size [batch_size, n_classes]
@@ -38,7 +39,7 @@ def accuracy(predictions, targets):
   Returns:
     accuracy: scalar float, the accuracy of predictions,
               i.e. the average correct predictions over the whole batch
-  
+
   TODO:
   Implement accuracy computation.
   """
@@ -46,7 +47,12 @@ def accuracy(predictions, targets):
   ########################
   # PUT YOUR CODE HERE  #
   #######################
-  raise NotImplementedError
+  predicted_class = np.argmax(predictions, axis = 1)
+  target_class = np.argmax(targets, axis = 1)
+  n = len(predicted_class)
+  diff = (target_class - predicted_class)
+  false_predictions = np.count_nonzero(diff)
+  accuracy = (n - false_predictions) / n
   ########################
   # END OF YOUR CODE    #
   #######################
@@ -55,7 +61,7 @@ def accuracy(predictions, targets):
 
 def train():
   """
-  Performs training and evaluation of MLP model. 
+  Performs training and evaluation of MLP model.
 
   TODO:
   Implement training and evaluation of MLP model. Evaluate your model on the whole test set each eval_freq iterations.
@@ -76,7 +82,61 @@ def train():
   ########################
   # PUT YOUR CODE HERE  #
   #######################
-  raise NotImplementedError
+
+  # prepare input data
+  cifar10 = cifar10_utils.get_cifar10(FLAGS.data_dir)
+  _, width, height, channels = cifar10['train']._images.shape
+  _, n_outputs =  cifar10['train']._labels.shape
+  n_inputs = width * height * channels
+
+  # initialize network
+  network = MLP(n_inputs, dnn_hidden_units, n_outputs)
+  cross_entropy = CrossEntropyModule()
+  loss = 0
+
+  # for plotting
+  steps, losses, accuracies = [], [], []
+
+  # iterate over batches, compute forward pass and new loss
+  for step in FLAGS.max_steps:
+      x, y = cifar10['train'].next_batch(FLAGS.batch_size)
+      x.reshape(FLAGS.batch_size,-1)
+
+      out = network.forward(x)
+      current_loss = cross_entropy.forward(out, y)
+      loss_grads = cross_entropy.backward(out, y)
+      network.backward(loss_grads)
+
+      # update the weights of the network
+      for layer in network.layers:
+          if isinstance(layer, LinearModule):
+              layer.params['weight'] = layer.params['weight'] + FLAGS.learning_rate * layer.grads['weight']
+              layer.params['bias'] = layer.params['bias'] + FLAGS.learning_rate * layer.grads['bias']
+
+      loss += current_loss
+
+      # calculate accuracy every eval_freq iterations
+      if step % FLAGS.eval_freq == 0:
+          x_test = cifar10['test']._images
+          x_test.reshape(x_test.shape[0], -1)
+          y_test = cifar10['test']._labels
+          out_test = network.forward(x_test)
+
+          accuracy = accuracy(out_test, y_test)
+          accuracies.append(accuracy)
+          steps.append(step)
+          losses.append(loss)
+          loss = 0
+
+  # plot graph of accuracies
+  plt.subplot(121)
+  plt.plot(steps, accuracies)
+  plt.title('Accuracy')
+  plt.subplot(122)
+  plt.plot(steps, losses)
+  plt.title('Cross-entropy loss')
+  plt.show()
+
   ########################
   # END OF YOUR CODE    #
   #######################
