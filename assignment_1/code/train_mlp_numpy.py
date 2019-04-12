@@ -98,13 +98,13 @@ def train():
   steps, losses, accuracies = [], [], []
 
   # iterate over batches, compute forward pass and new loss
-  for step in FLAGS.max_steps:
+  for step in range(FLAGS.max_steps):
       x, y = cifar10['train'].next_batch(FLAGS.batch_size)
-      x.reshape(FLAGS.batch_size,-1)
-
-      out = network.forward(x)
-      current_loss = cross_entropy.forward(out, y)
-      loss_grads = cross_entropy.backward(out, y)
+      x = x.reshape(FLAGS.batch_size,-1)
+      print(x.shape)
+      output = network.forward(x)
+      current_loss = cross_entropy.forward(output, y)
+      loss_grads = cross_entropy.backward(output, y)
       network.backward(loss_grads)
 
       # update the weights of the network

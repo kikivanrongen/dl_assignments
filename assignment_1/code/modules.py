@@ -27,7 +27,7 @@ class LinearModule(object):
     # PUT YOUR CODE HERE  #
     #######################
     mu, sig = 0, 0.0001
-    gaussian = np.random.normal(mu, sigma, (in_features, out_features))
+    gaussian = np.random.normal(mu, sig, (in_features, out_features))
     zeros = np.zeros((in_features, out_features))
     bias = np.zeros((out_features,))
 
@@ -57,6 +57,7 @@ class LinearModule(object):
     #######################
     self.out = x
     out = np.dot(x, self.params['weight']) + self.params['bias']
+
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -111,8 +112,8 @@ class ReLUModule(object):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    self.out = out
     out = x[x>=0]
+    self.out = out
     ########################
     # END OF YOUR CODE    #
     #######################

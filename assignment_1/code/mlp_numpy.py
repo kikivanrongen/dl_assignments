@@ -39,13 +39,13 @@ class MLP(object):
     self.layers = []
     previous = n_inputs
     for unit in n_hidden:
+        print("previous: {}, unit: {}".format(previous, unit))
         self.layers.append(LinearModule(previous, unit))
         self.layers.append(ReLUModule())
         previous = unit
 
     self.layers.append(LinearModule(previous, n_classes))
     self.layers.append(SoftMaxModule())
-
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -67,9 +67,9 @@ class MLP(object):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
+    out = x
     for layer in self.layers:
-        out = layer.forward(x)
-
+        out = layer.forward(out)
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -90,10 +90,11 @@ class MLP(object):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
+    out = dout
     for layer in self.layers:
-        layer.backward(dout)
+        out = layer.backward(out)
     ########################
     # END OF YOUR CODE    #
     #######################
 
-    return
+    return out
