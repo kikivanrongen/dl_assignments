@@ -39,7 +39,6 @@ class MLP(object):
     self.layers = []
     previous = n_inputs
     for unit in n_hidden:
-        print("previous: {}, unit: {}".format(previous, unit))
         self.layers.append(LinearModule(previous, unit))
         self.layers.append(ReLUModule())
         previous = unit
