@@ -156,8 +156,14 @@ class CustomBatchNormManualFunction(torch.autograd.Function):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    norm, inv_var, gamma = ctx.saved_tensors
-    grad_input = gamma * inv_var * grad_output
+    x_hat, inv_var, gamma = ctx.saved_tensors
+    N = grad_output.shape[0]
+    dxhat = grad_output * gamma
+
+    # compute gradients
+    grad_input = (1. / N) * inv_var * (N*dxhat - torch.sum(dxhat, dim=0) - x_hat*torch.sum(dxhat*x_hat, dim=0))
+    grad_beta = torch.sum(grad_output, dim=0)
+    grad_gamma = torch.sum(x_hat*grad_output, dim=0)
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -195,7 +201,10 @@ class CustomBatchNormManualModule(nn.Module):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    self.gamma = nn.Parameter(torch.ones(n_neurons,))
+    self.beta = nn.Parameter(torch.zeros(n_neurons,))
+    self.eps = eps
+    self.n_neurons = n_neurons
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -218,7 +227,11 @@ class CustomBatchNormManualModule(nn.Module):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    if input.shape[1] != self.n_neurons:
+        raise ValueError('Shapes do not match')
+
+    batch_norm = CustomBatchNormManualFunction()
+    out = batch_norm.apply(input, self.gamma, self.beta, self.eps)
     ########################
     # END OF YOUR CODE    #
     #######################

@@ -137,7 +137,7 @@ def train():
 
   # Get network output for batch and get loss and accuracy
   out = network(x)
-  print(accuracy(out, y))
+  print("Accuracy: {}".format(accuracy(out, y)))
 
   # plot graph of accuracies
   plt.subplot(211)

@@ -5,7 +5,7 @@ You should fill in code into indicated sections.
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-from custom_batchnorm import CustomBatchNormAutograd
+from custom_batchnorm import CustomBatchNormManualModule
 
 import torch
 import torch.nn as nn
@@ -43,10 +43,10 @@ class MLP(nn.Module):
     layers = []
 
     previous = n_inputs
-    layers.append(CustomBatchNormAutograd(previous))
+    layers.append(CustomBatchNormManualModule(previous))
     for unit in n_hidden:
         layers.append(nn.Linear(previous, unit))
-        layers.append(CustomBatchNormAutograd(unit))
+        layers.append(CustomBatchNormManualModule(unit))
         layers.append(nn.ReLU())
         previous = unit
     layers.append(nn.Linear(previous, n_classes))
