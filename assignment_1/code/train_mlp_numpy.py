@@ -129,6 +129,13 @@ def train():
 
             current_loss = 0.0
 
+    # compute accuracy over entire test set
+    x, y = cifar10['test'].next_batch(FLAGS.batch_size)
+    x = x.reshape(FLAGS.batch_size, -1)
+    out = network.forward(x)
+    result = accuracy(out, y)
+    print(result)
+
     # plot graph of accuracies
     plt.subplot(121)
     plt.plot(steps, accuracies)

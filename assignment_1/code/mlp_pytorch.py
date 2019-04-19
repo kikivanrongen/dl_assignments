@@ -43,10 +43,10 @@ class MLP(nn.Module):
     layers = []
 
     previous = n_inputs
-    layers.append(CustomBatchNormManualModule(previous))
+    #layers.append(CustomBatchNormManualModule(previous))
     for unit in n_hidden:
         layers.append(nn.Linear(previous, unit))
-        layers.append(CustomBatchNormManualModule(unit))
+        #layers.append(CustomBatchNormManualModule(unit))
         layers.append(nn.ReLU())
         previous = unit
     layers.append(nn.Linear(previous, n_classes))

@@ -76,11 +76,15 @@ def train():
   ########################
   # PUT YOUR CODE HERE  #
   #######################
+
+  # initialize device
+  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
   # prepare input data
   cifar10 = cifar10_utils.get_cifar10(FLAGS.data_dir)
   _, n_outputs =  cifar10['train']._labels.shape
 
-  network = ConvNet(3,n_outputs)
+  network = ConvNet(3,n_outputs).to(device)
 
   optimizer = torch.optim.Adam(network.parameters(), lr=FLAGS.learning_rate) # or SGD?
   loss_fn = nn.CrossEntropyLoss()
@@ -93,7 +97,7 @@ def train():
       optimizer.zero_grad()
 
       x, y = cifar10['train'].next_batch(FLAGS.batch_size)
-      x, y = torch.tensor(x, requires_grad=True), torch.tensor(y, dtype=torch.float)
+      x, y = torch.tensor(x, requires_grad=True).to(device), torch.tensor(y, dtype=torch.float).to(device)
       # x = x.reshape(FLAGS.batch_size,-1)
 
       output = network(x)
@@ -111,7 +115,7 @@ def train():
 
 
           x_test, y_test = cifar10['test'].next_batch(FLAGS.batch_size)
-          x_test, y_test = torch.tensor(x_test, requires_grad=True), torch.tensor(y_test, dtype=torch.float)
+          x_test, y_test = torch.tensor(x_test, requires_grad=True).to(device), torch.tensor(y_test, dtype=torch.float).to(device)
           # x_test = x_test.reshape(FLAGS.batch_size, -1)
 
           output_test = network(x_test)

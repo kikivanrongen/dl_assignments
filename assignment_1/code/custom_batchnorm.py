@@ -124,7 +124,7 @@ class CustomBatchNormManualFunction(torch.autograd.Function):
     # PUT YOUR CODE HERE  #
     #######################
     mean = torch.mean(input, dim=0)
-    variance = torch.var(input, dim=0)
+    variance = torch.var(input, dim=0, unbiased=False)
     inverse_var = 1 / torch.sqrt(variance + eps)
     normalized = (input - mean) * inverse_var
     out = normalized * gamma + beta
