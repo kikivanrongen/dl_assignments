@@ -115,7 +115,7 @@ def train():
 
 
           x_test, y_test = cifar10['test'].next_batch(FLAGS.batch_size)
-          x_test, y_test = torch.tensor(x_test, requires_grad=True).to(device), torch.tensor(y_test, dtype=torch.float).to(device)
+          x_test, y_test = torch.tensor(x_test).to(device), torch.tensor(y_test, dtype=torch.float).to(device)
           # x_test = x_test.reshape(FLAGS.batch_size, -1)
 
           output_test = network(x_test)
@@ -128,14 +128,14 @@ def train():
           print("Step {}".format(step))
 
   print("-------------FINISHED TRAINING-------------")
-  size_test = cifar10['test']._num_examples
-  x, y = cifar10['test'].next_batch(size_test)
-  x, y = torch.tensor(x, requires_grad=True), torch.tensor(y, dtype=torch.float)
+  # size_test = cifar10['test']._num_examples
+  # x, y = cifar10['test'].next_batch(size_test)
+  # x, y = torch.tensor(x, requires_grad=True), torch.tensor(y, dtype=torch.float)
   # x = x.reshape(size_test, -1)
 
   # Get network output for batch and get loss and accuracy
   out = network(x)
-  print("Accuracy: {}".format(accuracy(out, y)))
+  print("Accuracy: {}".format(accuracy(out.to('cpu'), y.to('cpu'))))
 
   # plot graph of accuracies
   plt.subplot(211)
@@ -149,7 +149,7 @@ def train():
   plt.plot(train_losses, label = "training loss")
   plt.title('Cross-entropy loss')
   plt.legend()
-
+  plt.savefig('plot.png')
   plt.show()
   ########################
   # END OF YOUR CODE    #

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "train_convnet_pytorch.py", line 12, in <module>
+    from convnet_pytorch import ConvNet
+ImportError: No module named convnet_pytorch
+Traceback (most recent call last):
+  File "train_convnet_pytorch.py", line 12, in <module>
+    from convnet_pytorch import ConvNet
+  File "/home/lgpu0352/convnet_pytorch.py", line 9, in <module>
+    import torch.nn as nn
+ImportError: No module named torch.nn
